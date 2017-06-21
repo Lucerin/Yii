@@ -1,0 +1,108 @@
+<?php
+
+/**
+ * This sniff prohibits the use of Perl style hash comments.
+ *
+ * PHP version 5
+ *
+ * @category  PHP
+ * @package   PHP_CodeSniffer
+ * @author    Your Name <you@domain.net>
+ * @license   http://matrix.squiz.net/developer/tools/php_cs/licence BSD Licence
+ * @version   SVN: $Id: coding-standard-tutorial.xml,v 1.9 2008-10-09 15:16:47 cweiske Exp $
+ * @link      http://pear.php.net/package/PHP_CodeSniffer
+ */
+
+/**
+ * This sniff prohibits the use of Perl style hash comments.
+ *
+ * An example of a hash comment is:
+ *
+ * <code>
+ *  # This is a hash comment, which is prohibited.
+ *  $hello = 'hello';
+ * </code>
+ * 
+ * @category  PHP
+ * @package   PHP_CodeSniffer
+ * @author    Your Name <you@domain.net>
+ * @license   http://matrix.squiz.net/developer/tools/php_cs/licence BSD Licence
+ * @version   Release: @package_version@
+ * @link      http://pear.php.net/package/PHP_CodeSniffer
+ */
+class ComparadorDeListas {
+private $arregloInstancias=array();
+private $arregloClases=array();
+private $arregloErrores=array(); //contiene la ubicación y nombre del archiuo.
+
+
+  public function __construct($arr1, $arr2) {
+        // Access instance variables with $this
+        $this->arregloInstancias = $arr2;
+	$this->arregloClases = $arr1;
+
+    }
+
+
+
+ public function compararClases(){
+	foreach ($this->arregloInstancias as &$instancias){
+		   $porcionesInstancias = explode("*", $instancias);
+		foreach ($this->arregloClases as &$clases) {
+			   $porcionesClases = explode("*", $clases);
+
+				if($porcionesClases[0]==$porcionesInstancias[0]){
+					//echo "son iguales.------------\n";
+					//echo $instancias."\n";
+					//echo $clases."\n";
+					$this->compararDirectorio($porcionesInstancias[2],$instancias,$porcionesClases[1],$clases);
+				}//fin del if
+		}
+	}
+	
+
+ 
+
+  }//end comparar
+
+  private function compararDirectorio($instancia,$instanciaCompleta,$clases,$claseComplea){
+	//echo "son directorio.\n";
+
+
+	$posicionInstanciaModelo = strstr($instancia, 'models', true);
+	$posicionInstanciaVista = strstr($instancia, 'views', true);
+	$posicionClasesModelo = strstr($clases, 'models', true);
+	$posicionClasesVista = strstr($clases, 'views', true);
+	
+	if ($posicionInstanciaVista!=false and $posicionClasesModelo!=false ){
+		echo $instanciaCompleta."\n";
+		echo $claseComplea."\n";
+		echo $posicionInstanciaVista."\n";
+		echo $posicionClasesModelo."\n";
+		if( $posicionInstanciaVista==$posicionClasesModelo){
+			//echo stristr($posicionInstanciaVista, $posicionClasesModelo);
+			//echo $posicionInstanciaVista."\n";
+			//echo $posicionClasesModelo."\n";
+			array_push($this->arregloErrores,$instanciaCompleta."*".$claseComplea);
+		}
+	}else if ($posicionInstanciaModelo!=false and $posicionClasesVista!=false ){
+		echo $instanciaCompleta."\n";
+		echo $claseComplea."\n";
+		echo $posicionInstanciaModelo."\n";
+		echo $posicionClasesVista."\n";
+		if( $posicionInstanciaModelo==$posicionClasesVista){
+//echo stristr($posicionInstanciaVista, $posicionClasesModelo);
+
+		//echo $posicionClasesModelo."\n";
+		//echo $posicionInstanciaModelo."\n";
+		//echo $posicionClasesVista."\n";
+			array_push($this->arregloErrores,$instanciaCompleta."*".$claseComplea);
+		}
+	}//fin del elseif
+
+//print_r($this->arregloErrores);	
+ }//fin del comparar Directorio
+
+}//end class
+
+?>
